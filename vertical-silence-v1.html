@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Silence — Algorithm 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--dark:#141413;--light:#faf9f5;--mid:#b0aea5;--lgray:#e8e6dc;--accent:#d97757}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Poppins',sans-serif;background:var(--dark);color:var(--dark);min-height:100vh;display:flex;flex-direction:column}
+        #canvas-wrap{width:100%;background:#111;display:flex;align-items:center;justify-content:center}
+        #canvas-container{line-height:0;width:100%}
+        #canvas-container canvas{width:100%!important;height:auto!important;display:block}
+        .panel{background:var(--light);padding:20px 20px 28px;flex:1}
+        .panel-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+        .panel-header h1{font-family:'Lora',serif;font-size:20px;font-weight:500}
+        .panel-header span{font-size:12px;color:var(--mid)}
+        .section{margin-bottom:20px}
+        .section-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 0;border:none;background:none;width:100%;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--dark);-webkit-tap-highlight-color:transparent}
+        .section-toggle::before{content:'•';color:var(--accent);font-weight:bold;margin-right:8px}
+        .section-toggle .chevron{font-size:11px;color:var(--mid);transition:transform 0.2s}
+        .section-toggle.collapsed .chevron{transform:rotate(-90deg)}
+        .section-body{overflow:hidden}.section-body.hidden{display:none}
+        .string-input{width:100%;background:white;padding:10px 12px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;border:1px solid var(--lgray);resize:none;height:52px;margin-bottom:8px}
+        .string-input:focus{outline:none;border-color:var(--accent)}
+        .info-text{font-size:11px;color:var(--mid);margin-bottom:10px}
+        .seed-num{width:100%;background:white;padding:10px;border-radius:8px;font-family:'Courier New',monospace;font-size:13px;border:1px solid var(--lgray);text-align:center;margin-bottom:10px}
+        .seed-num:focus{outline:none;border-color:var(--accent)}
+        .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .btn{padding:10px 14px;border:1px solid var(--lgray);border-radius:8px;background:white;font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--dark);-webkit-tap-highlight-color:transparent}
+        .btn:active{background:var(--lgray)}
+        .btn-dark{background:var(--dark);color:white;border-color:var(--dark)}
+        .btn-dark:active{background:#2a2a28}
+        .ctrl{margin-bottom:16px}
+        .ctrl label{display:block;font-size:13px;font-weight:500;margin-bottom:5px}
+        .slider-row{display:flex;align-items:center;gap:10px}
+        .slider-row input[type="range"]{flex:1;height:4px;background:var(--lgray);border-radius:2px;outline:none;-webkit-appearance:none}
+        .slider-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--accent);border-radius:50%;cursor:pointer}
+        .slider-row input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:var(--accent);border-radius:50%;border:none;cursor:pointer}
+        .val{font-family:'Courier New',monospace;font-size:11px;color:var(--mid);min-width:44px;text-align:right}
+        @media(min-width:900px){
+            body{flex-direction:row}
+            #canvas-wrap{flex:1;min-width:0;height:100vh}
+            #canvas-container{width:auto;max-width:100%;max-height:100vh}
+            #canvas-container canvas{width:auto!important;max-width:100%;max-height:100vh;object-fit:contain}
+            .panel{width:320px;flex:none;height:100vh;overflow-y:auto;border-left:1px solid var(--lgray)}
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-wrap"><div id="canvas-container"></div></div>
+    <div class="panel">
+        <div class="panel-header"><h1>Vertical Silence</h1><span>Algorithm 1</span></div>
+        <div class="section">
+            <button class="section-toggle" onclick="toggleSection(this)">Seed <span class="chevron">▼</span></button>
+            <div class="section-body">
+                <textarea class="string-input" id="seed-string" placeholder="Enter any text…" oninput="updateFromString()">The only true wisdom is in knowing you know nothing.</textarea>
+                <p class="info-text">Each unique string generates a unique piece.</p>
+                <input class="seed-num" id="seed-input" type="number" value="12345" onchange="updateSeed()">
+                <div class="btn-grid">
+                    <button class="btn" onclick="previousSeed()">← Prev</button>
+                    <button class="btn" onclick="nextSeed()">Next →</button>
+                    <button class="btn" onclick="randomSeedAndUpdate()">Random</button>
+                    <button class="btn btn-dark" onclick="initializeSystem()">Regenerate</button>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <button class="section-toggle" onclick="toggleSection(this)">Parameters <span class="chevron">▼</span></button>
+            <div class="section-body">
+                <div class="ctrl"><label>Clusters</label><div class="slider-row"><input type="range" id="clusterCount" min="1" max="6" step="1" value="2" oninput="updateParam('clusterCount',this.value)"><span class="val" id="clusterCount-value">2</span></div></div>
+                <div class="ctrl"><label>Scale</label><div class="slider-row"><input type="range" id="scale" min="0.6" max="4.0" step="0.1" value="2.0" oninput="updateParam('scale',this.value)"><span class="val" id="scale-value">2.0</span></div></div>
+                <div class="ctrl"><label>Darkness</label><div class="slider-row"><input type="range" id="darkness" min="0.5" max="1.0" step="0.05" value="0.9" oninput="updateParam('darkness',this.value)"><span class="val" id="darkness-value">0.9</span></div></div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="btn-grid">
+                <button class="btn" onclick="resetParameters()">Reset</button>
+                <button class="btn btn-dark" onclick="downloadImage()">Download PNG</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function toggleSection(b){b.classList.toggle('collapsed');b.nextElementSibling.classList.toggle('hidden')}
+function dualHash(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){let c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return[h1>>>0,h2>>>0]}
+function sfc32(a,b,c,d){return function(){a|=0;b|=0;c|=0;d|=0;let t=(a+b|0)+d|0;d=d+1|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);c=c+t|0;return(t>>>0)/4294967296}}
+
+const W=1920,H=1080;
+let params={seed:12345,seedString:"The only true wisdom is in knowing you know nothing.",clusterCount:2,scale:2.0,darkness:0.9};
+let defaultParams={...params};
+let rng;
+function R(){return rng()}
+function L(a,b,t){return a+(b-a)*t}
+function C(v,lo,hi){return v<lo?lo:v>hi?hi:v}
+
+function setup(){
+    let canvas=createCanvas(W,H);
+    canvas.parent('canvas-container');
+    pixelDensity(2);noLoop();
+    initializeSystem();
+}
+
+function initializeSystem(){
+    let h;
+    if(params.seedString&&params.seedString.length>0)h=dualHash(params.seedString);
+    else h=dualHash(String(params.seed));
+    rng=sfc32(h[0],h[1],h[0]^0x12345678,h[1]^0x9abcdef0);
+    for(let i=0;i<20;i++)rng();
+    redraw();
+}
+
+function draw(){
+    background(255);
+    noStroke();
+    rectMode(CENTER);
+
+    let numClusters=params.clusterCount;
+
+    // ── SCALE TIERS ──
+    let tiers=[];
+    if(numClusters===1) tiers=['large'];
+    else if(numClusters===2) tiers=['large','small'];
+    else if(numClusters===3) tiers=['large','medium','small'];
+    else {
+        for(let i=0;i<numClusters;i++){
+            let r=i/numClusters;
+            if(r<0.33) tiers.push('large');
+            else if(r<0.66) tiers.push('medium');
+            else tiers.push('small');
+        }
+    }
+    for(let i=tiers.length-1;i>0;i--){
+        let j=Math.floor(R()*(i+1));
+        [tiers[i],tiers[j]]=[tiers[j],tiers[i]];
+    }
+
+    let clusters=[];
+    let occupiedRanges=[];
+
+    for(let i=0;i<numClusters;i++){
+        let tier=tiers[i];
+
+        // Scale
+        let clusterScale;
+        switch(tier){
+            case 'large': clusterScale=L(0.85,1.5,R()); break;
+            case 'medium': clusterScale=L(0.4,0.7,R()); break;
+            case 'small': clusterScale=L(0.08,0.28,R()); break;
+        }
+        clusterScale*=params.scale;
+
+        // ── BAR DIMENSIONS ──
+        // Height: UNIFORM within cluster (the blockquote rule)
+        let barH=H*L(0.3,1.4,clusterScale);
+
+        // Width: proportional to scale but kept narrow relative to height
+        // The bar should read as a | not a rectangle
+        // Aspect ratio: height/width should be at least 6:1 for large, higher for small
+        let minAspect=tier==='large'?6:tier==='medium'?8:12;
+        let maxW=barH/minAspect;
+        let barW=Math.max(3,Math.min(maxW,L(8,45,clusterScale)*params.scale));
+
+        // Gap: wider than bar width so each bar reads individually
+        // Gap is 1x-3x the bar width — this is the key blockquote spacing
+        let gapRatio=L(1.2,3.0,R());
+        let gap=Math.max(4,barW*gapRatio);
+
+        // Count
+        let count=tier==='small'?Math.floor(L(3,7,R())):Math.floor(L(4,14,Math.pow(R(),0.5)));
+
+        let totalClusterW=count*(barW+gap)-gap;
+
+        // ── POSITION X with separation ──
+        let cx;
+        let margin=80;
+        let attempts=0;
+        let placed=false;
+
+        while(attempts<40&&!placed){
+            if(tier==='large'){
+                let edgeR=R();
+                if(edgeR<0.45) cx=L(-totalClusterW*0.35,totalClusterW*0.2,R());
+                else if(edgeR<0.75) cx=W-L(-totalClusterW*0.35,totalClusterW*0.2,R());
+                else cx=L(W*0.15,W*0.85,R());
+            } else if(tier==='small'){
+                cx=L(W*0.1,W*0.9,R());
+            } else {
+                cx=L(W*0.05,W*0.95,R());
+            }
+
+            let left=cx-totalClusterW/2-margin;
+            let right=cx+totalClusterW/2+margin;
+            let overlaps=false;
+            for(let occ of occupiedRanges){
+                if(left<occ.right&&right>occ.left){overlaps=true;break}
+            }
+            if(!overlaps){
+                placed=true;
+                occupiedRanges.push({left:cx-totalClusterW/2,right:cx+totalClusterW/2});
+            }
+            attempts++;
+        }
+        if(!placed) occupiedRanges.push({left:cx-totalClusterW/2,right:cx+totalClusterW/2});
+
+        // ── Y POSITION: bottom bias ──
+        let alignR=R();
+        let align,cy;
+        if(alignR<0.75){
+            align='bottom';
+            cy=H-L(-5,barH*0.06,R());
+        } else if(alignR<0.92){
+            align='center';
+            cy=L(H*0.35,H*0.65,R());
+        } else {
+            align='top';
+            cy=L(-5,barH*0.06,R());
+        }
+
+        // ── SHADE ──
+        let isWhisper=R()<0.15;
+        let shadeBase;
+        if(isWhisper){
+            shadeBase=L(0.10,0.30,R());
+        } else {
+            shadeBase=L(params.darkness*0.6,params.darkness,R());
+        }
+
+        // Shade mode: mostly flat (uniform), occasionally gentle gradient
+        let shadeMode=R()<0.65?'flat':'gradient';
+        let shadeEnd=shadeBase;
+        if(shadeMode==='gradient'){
+            let dir=R()<0.5?1:-1;
+            shadeEnd=C(shadeBase+dir*L(0.06,0.2,R()),0.05,0.98);
+        }
+
+        clusters.push({cx,cy,barH,barW,gap,count,shadeBase,shadeEnd,shadeMode,align,scale:clusterScale,tier});
+    }
+
+    // Sort: larger behind
+    clusters.sort((a,b)=>b.scale-a.scale);
+
+    // ── RENDER ──
+    for(let cl of clusters){
+        let totalW=cl.count*(cl.barW+cl.gap)-cl.gap;
+        let startX=cl.cx-totalW/2;
+
+        for(let i=0;i<cl.count;i++){
+            let t=cl.count>1?i/(cl.count-1):0.5;
+
+            // Height: UNIFORM — all bars same height in cluster
+            let bh=cl.barH;
+            let bw=cl.barW;
+            let bx=startX+i*(bw+cl.gap)+bw/2;
+
+            let by;
+            switch(cl.align){
+                case 'bottom': by=cl.cy-bh/2; break;
+                case 'top': by=cl.cy+bh/2; break;
+                case 'center': by=cl.cy; break;
+            }
+
+            // Shade
+            let shadeT=cl.shadeMode==='flat'?cl.shadeBase:L(cl.shadeBase,cl.shadeEnd,t);
+            let grey=C(L(235,5,shadeT),0,245);
+
+            fill(grey);
+            rect(bx,by,bw,bh);
+        }
+    }
+
+    // Minimal grain
+    loadPixels();
+    let d=pixelDensity(),total=4*(width*d)*(height*d);
+    let gs=Math.floor(R()*2147483647);
+    for(let i=0;i<total;i+=4){
+        gs=(gs*1103515245+12345)&0x7fffffff;
+        let g=((gs>>16)&0xff)-128;g*=0.02;
+        pixels[i]=C(pixels[i]+g,0,255);
+        pixels[i+1]=C(pixels[i+1]+g,0,255);
+        pixels[i+2]=C(pixels[i+2]+g,0,255);
+    }
+    updatePixels();
+}
+
+function downloadImage(){
+    let c=document.querySelector('#canvas-container canvas');
+    let link=document.createElement('a');
+    link.download='vertical-silence-'+params.seed+'.png';
+    link.href=c.toDataURL('image/png');
+    link.click();
+}
+
+function updateFromString(){let s=document.getElementById('seed-string').value;params.seedString=s;let h=dualHash(s);params.seed=h[0]%999999;document.getElementById('seed-input').value=params.seed;initializeSystem()}
+function updateSeed(){let v=parseInt(document.getElementById('seed-input').value);if(v&&v>0){params.seed=v;params.seedString="";document.getElementById('seed-string').value="";initializeSystem()}}
+function previousSeed(){params.seed=Math.max(1,params.seed-1);params.seedString="";document.getElementById('seed-string').value="";document.getElementById('seed-input').value=params.seed;initializeSystem()}
+function nextSeed(){params.seed++;params.seedString="";document.getElementById('seed-string').value="";document.getElementById('seed-input').value=params.seed;initializeSystem()}
+function randomSeedAndUpdate(){params.seed=Math.floor(Math.random()*999999)+1;params.seedString="";document.getElementById('seed-string').value="";document.getElementById('seed-input').value=params.seed;initializeSystem()}
+function updateParam(n,v){params[n]=parseFloat(v);document.getElementById(n+'-value').textContent=params[n];initializeSystem()}
+function resetParameters(){params={...defaultParams};document.getElementById('seed-string').value=params.seedString;document.getElementById('seed-input').value=params.seed;['clusterCount','scale','darkness'].forEach(k=>{document.getElementById(k).value=params[k];document.getElementById(k+'-value').textContent=params[k]});initializeSystem()}
+</script>
+</body>
+</html>
