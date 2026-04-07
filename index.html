@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertical Silence — Algorithm 1</title>
+    <title>Unblocked — Algorithm 1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -52,7 +52,7 @@
 <body>
     <div id="canvas-wrap"><div id="canvas-container"></div></div>
     <div class="panel">
-        <div class="panel-header"><h1>Vertical Silence</h1><span>Algorithm 1</span></div>
+        <div class="panel-header"><h1>Unblocked</h1><span>Algorithm 1</span></div>
         <div class="section">
             <button class="section-toggle" onclick="toggleSection(this)">Seed <span class="chevron">▼</span></button>
             <div class="section-body">
@@ -288,7 +288,7 @@ function draw(){
 function downloadImage(){
     let c=document.querySelector('#canvas-container canvas');
     let link=document.createElement('a');
-    link.download='vertical-silence-'+params.seed+'.png';
+    link.download='unblocked-'+params.seed+'.png';
     link.href=c.toDataURL('image/png');
     link.click();
 }

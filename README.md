@@ -1,12 +1,12 @@
-# Vertical Silence
+# Unblocked
 
 Generative art series using the blockquote vertical bar `|` as the sole visual motif.
 
-**[Live site →](https://vertical-silence.vercel.app)**
+**[Live site →](https://unblocked.vercel.app)**
 
 ## About
 
-Vertical Silence is a string-seeded generative design system. Each unique text input produces a unique, deterministic composition of vertical bars — monochrome, structured, minimal.
+Unblocked is a string-seeded generative design system. Each unique text input produces a unique, deterministic composition of vertical bars — monochrome, structured, minimal.
 
 The aesthetic draws from Tyler Hobbs' line-based compositional sensibility and Jack Butcher's monochrome discipline. Every output is white background, black/grey bars, nothing else.
 
@@ -49,7 +49,7 @@ The first PRNG calls determine cluster scale tiers, positions, shades, and align
 ## Project structure
 
 ```
-vertical-silence/
+unblocked/
 ├── index.html    # Complete self-contained app
 └── README.md     # This file
 ```
@@ -72,7 +72,7 @@ Deployed on Vercel as a static site. Any push to `main` auto-deploys.
 
 ## Algorithm lineage
 
-This is **Algorithm 1** of the Vertical Silence series. The creative journey:
+This is **Algorithm 1** of the Unblocked series. The creative journey:
 
 - v1–v3: Flow field experiments (bars following noise-driven paths)
 - v4–v5: Shift to design-driven approach (structured clusters, not particle systems)

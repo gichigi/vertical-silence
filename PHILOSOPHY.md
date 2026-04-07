@@ -1,8 +1,8 @@
-# Vertical Silence
+# Unblocked
 
 ## An Algorithmic Philosophy
 
-The vertical bar is the most primitive act of mark-making: a line that stands. Before language, before symbol, before meaning — there is the stroke. In typographic convention, the blockquote bar signals borrowed voice, a passage held at arm's length, words attributed to elsewhere. Stripped of its text, the bar becomes pure structure: a monument one pixel wide, a boundary between what was said and what remains unsaid. *Vertical Silence* takes this single element — `|` — and through computational repetition, variation, and emergent field dynamics, transforms it into landscapes of rhythm and negative space.
+The vertical bar is the most primitive act of mark-making: a line that stands. Before language, before symbol, before meaning — there is the stroke. In typographic convention, the blockquote bar signals borrowed voice, a passage held at arm's length, words attributed to elsewhere. Stripped of its text, the bar becomes pure structure: a monument one pixel wide, a boundary between what was said and what remains unsaid. *Unblocked* takes this single element — `|` — and through computational repetition, variation, and emergent field dynamics, transforms it into landscapes of rhythm and negative space.
 
 The algorithm operates as a flow field inhabited exclusively by vertical bars. A Perlin noise field defines the topology — an invisible terrain of gradients that governs where bars cluster densely and where they thin to nothing. Each bar inherits its properties from the noise value at its position: stroke weight swells from hairline to bold, height stretches from stub to full-canvas span, greyscale value shifts from near-black to pale whisper. Bars are permitted only the slightest rotational deviation — never more than 12 degrees from true vertical — preserving the essential identity of the blockquote mark even as thousands of them accumulate into something that transcends punctuation. The result must feel as though a master typographer spent months arranging ten thousand quotation fragments by hand, only to erase every word and leave the margins standing.
 
