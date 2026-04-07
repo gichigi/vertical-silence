@@ -8,7 +8,7 @@ I've loved generative art for years. Fidenza by Tyler Hobbs. Ringers by Dmitri C
 
 The blockquote `|` was already floating around as the Mooch visual motif. And p5.js was already in our stack. So the ingredients were there.
 
-One night at 2am I opened Claude, gave it a brief, and we built it together across nine iterations. The rules that emerged: one motif, monochrome only, text-seeded so every input produces a unique but deterministic piece. The `|` is a blockquote mark. It signals borrowed voice, words held at a distance. Strip the text away and you're left with just the structure. Just the marks.
+One night at midnight I opened Claude, gave it a brief, and we built it together across nine iterations. The rules that emerged: one motif, monochrome only, text-seeded so every input produces a unique but deterministic piece. The `|` is a blockquote mark. It signals borrowed voice, words held at a distance. Strip the text away and you're left with just the structure. Just the marks.
 
 The sweet spot: 2 clusters, scale 2-4, high darkness. One large group bleeding off an edge, one smaller accent cluster. Generous white space between them.
 
