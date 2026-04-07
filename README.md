@@ -2,7 +2,7 @@
 
 Generative art series using the blockquote vertical bar `|` as the sole visual motif.
 
-**[Live site →](https://unblocked.vercel.app)**
+**[Live →](https://unblocked.vercel.app)**
 
 ## About
 
