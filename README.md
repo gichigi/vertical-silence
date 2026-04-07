@@ -4,31 +4,33 @@ Generative art series using the blockquote vertical bar `|` as the sole visual m
 
 **[Live →](https://unblocked.vercel.app)**
 
-## About
+## What it is
 
-Unblocked is a string-seeded generative design system. Each unique text input produces a unique, deterministic composition of vertical bars — monochrome, structured, minimal.
+I needed a system for generating article banners — something high quality, quick to produce, visually consistent, and distinctly ours. Not stock photos. Not Canva templates.
 
-The aesthetic draws from Tyler Hobbs' line-based compositional sensibility and Jack Butcher's monochrome discipline. Every output is white background, black/grey bars, nothing else.
+The result: a text-seeded generative art tool. Type anything in, get a unique composition of vertical bars. Same input always produces the same output. One motif, monochrome, 16:9.
+
+Built across nine iterations in one late-night session with Claude.
 
 ## How it works
 
-1. **Seed** — Enter any text string or use a numeric seed. The same input always produces the same output.
-2. **Clusters** — The algorithm places 1–6 groups of uniform-height vertical bars across a 16:9 canvas.
-3. **Scale variation** — Clusters range from tiny accent marks to full-bleed bars taller than the canvas.
-4. **Separation** — Overlap prevention ensures clean negative space between groups.
-5. **Shade** — Most clusters are near-black; occasional grey "whisper" clusters provide contrast.
-6. **Export** — Download as 3840×2160 PNG (2x resolution for crisp web display).
+1. **Seed** — Enter any text string or use a numeric seed. Same input always produces the same output.
+2. **Clusters** — The algorithm places 1-6 groups of uniform-height vertical bars across a 16:9 canvas.
+3. **Scale** — Clusters range from small accent marks to full-bleed bars taller than the canvas.
+4. **Separation** — Overlap prevention keeps clean negative space between groups.
+5. **Shade** — Most clusters are near-black; occasional grey whispers provide contrast.
+6. **Export** — Download as 3840x2160 PNG.
 
 ### Sweet spot
 
-The best outputs tend to come from **2 clusters, scale 2–4, high darkness** — producing compositions with one large edge-bleeding group and one smaller accent cluster with generous white space between them.
+2 clusters, scale 2-4, high darkness. One large group bleeding off an edge, one smaller accent cluster. Generous white space between them.
 
 ## Technical details
 
 - **p5.js** (v1.7.0) — canvas rendering
 - **SFC32 PRNG** — deterministic pseudorandom number generation from dual-hash string seeds
 - **No dependencies** — single self-contained HTML file
-- **16:9 output** — 1920×1080 canvas, exported at 3840×2160 (pixelDensity 2)
+- **16:9 output** — 1920x1080 canvas, exported at 3840x2160
 
 ### String-to-seed pipeline
 
@@ -36,15 +38,13 @@ The best outputs tend to come from **2 clusters, scale 2–4, high darkness** �
 Input string → dual hash (MurmurHash-style) → SFC32 PRNG → macro parameters → composition
 ```
 
-The first PRNG calls determine cluster scale tiers, positions, shades, and alignment. All subsequent bar placement is derived from these — same string, same piece, every run.
-
 ## Parameters
 
 | Parameter | Range | Default | Effect |
 |-----------|-------|---------|--------|
-| Clusters | 1–6 | 2 | Number of bar groups |
-| Scale | 0.6–4.0 | 2.0 | Overall size multiplier |
-| Darkness | 0.5–1.0 | 0.9 | How dark the bars are |
+| Clusters | 1-6 | 2 | Number of bar groups |
+| Scale | 0.6-4.0 | 2.0 | Overall size multiplier |
+| Darkness | 0.5-1.0 | 0.9 | How dark the bars are |
 
 ## Project structure
 
@@ -59,28 +59,19 @@ unblocked/
 No build step. Open `index.html` in a browser or deploy to any static host.
 
 ```bash
-# Local development
 open index.html
-
-# Or serve with any static server
-npx serve .
 ```
 
-## Deployment
+## Algorithm history
 
-Deployed on Vercel as a static site. Any push to `main` auto-deploys.
+Nine versions to get here:
 
-## Algorithm lineage
-
-This is **Algorithm 1** of the Unblocked series. The creative journey:
-
-- v1–v3: Flow field experiments (bars following noise-driven paths)
-- v4–v5: Shift to design-driven approach (structured clusters, not particle systems)
-- v6–v7: Scale increase, edge bleed, black-dominant palette
-- v8: Overlap prevention, enforced scale tiers
-- v9: Uniform bar height within clusters, generous spacing for blockquote readability
+- v1-v3: Flow field experiments — bars following noise-driven paths. Looked like static or tree branches, not composition.
+- v4-v5: Switched from thinking "generative art" to "design tool". Structured clusters. Closer, but ascending bar heights looked like a finance chart.
+- v6-v7: Scaled up. Edge bleed. Black-dominant palette. Fewer clusters, more conviction.
+- v8: Added overlap prevention and enforced scale tiers. Compositions started feeling designed.
+- v9: Uniform bar height within clusters (blockquote, not bar chart). Generous spacing. This is the one.
 
 ## License
 
 MIT
-
